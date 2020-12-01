@@ -1,0 +1,1 @@
+fork by [lamvd0101/react-native-video-editor](https://github.com/lamvd0101/react-native-video-editor) and fixed ios swift bugs.
