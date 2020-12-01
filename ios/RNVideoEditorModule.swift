@@ -37,16 +37,29 @@ class RNVideoEditorModule: NSObject {
         if (timeRange != nil) {
             self.exportSession!.timeRange = timeRange!
         }
-        self.exportSession!.videoSettings = [
-            AVVideoCodecKey: AVVideoCodecType.h264,
-            AVVideoWidthKey: self.VIDEO_WIDTH,
-            AVVideoHeightKey: self.VIDEO_HEIGHT,
-            AVVideoCompressionPropertiesKey: [
-                AVVideoMaxKeyFrameIntervalKey: self.VIDEO_FPS,
-                AVVideoAverageBitRateKey: self.VIDEO_BITRATE,
-                AVVideoProfileLevelKey: AVVideoProfileLevelH264High40
+        if #available(iOS 11.0, *) {
+            self.exportSession!.videoSettings = [
+                AVVideoCodecKey: AVVideoCodecType.h264,
+                AVVideoWidthKey: self.VIDEO_WIDTH,
+                AVVideoHeightKey: self.VIDEO_HEIGHT,
+                AVVideoCompressionPropertiesKey: [
+                    AVVideoMaxKeyFrameIntervalKey: self.VIDEO_FPS,
+                    AVVideoAverageBitRateKey: self.VIDEO_BITRATE,
+                    AVVideoProfileLevelKey: AVVideoProfileLevelH264High40
+                ]
             ]
-        ]
+        } else {
+            self.exportSession!.videoSettings = [
+                AVVideoCodecKey: AVVideoCodecH264,
+                AVVideoWidthKey: self.VIDEO_WIDTH,
+                AVVideoHeightKey: self.VIDEO_HEIGHT,
+                AVVideoCompressionPropertiesKey: [
+                    AVVideoMaxKeyFrameIntervalKey: self.VIDEO_FPS,
+                    AVVideoAverageBitRateKey: self.VIDEO_BITRATE,
+                    AVVideoProfileLevelKey: AVVideoProfileLevelH264High40
+                ]
+            ]
+        }
         self.exportSession!.audioSettings = [
             AVFormatIDKey: kAudioFormatMPEG4AAC,
             AVNumberOfChannelsKey: 2,
