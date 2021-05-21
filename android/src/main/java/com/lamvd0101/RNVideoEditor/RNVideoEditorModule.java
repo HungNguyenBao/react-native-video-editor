@@ -125,7 +125,7 @@ public class RNVideoEditorModule extends ReactContextBaseJavaModule {
 
       if (format != null && format.equals("jpg")) {
         final File tempFile = RNVideoEditorUtilities.createTempFile("jpg", reactContext);
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        bm.compress(Bitmap.CompressFormat.JPEG, 30, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
 
         FileOutputStream fos = new FileOutputStream( tempFile.getPath() );
