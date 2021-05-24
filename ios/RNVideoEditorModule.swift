@@ -190,6 +190,7 @@ class RNVideoEditorModule: NSObject {
     ) -> Void {
         do {
             var assets: Array<AVAsset> = Array()
+            let idx = assets.firstIndex(where: {$0.tracks(withMediaType: .audio).count > 0})
             for source in videoFiles {
                 let asset: AVAsset! = try RNVideoEditorUtilities.requestAsset(source)
                 assets.append(asset)
@@ -197,7 +198,7 @@ class RNVideoEditorModule: NSObject {
             
             let compositionAsset: AVMutableComposition = AVMutableComposition()
             let videoTrack: AVMutableCompositionTrack? = compositionAsset.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
-            let soundTrack: AVMutableCompositionTrack? = compositionAsset.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+            let soundTrack: AVMutableCompositionTrack? = idx == nil ? nil : compositionAsset.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
             
             var insertTime = CMTime.zero
             for asset in assets {
@@ -211,8 +212,16 @@ class RNVideoEditorModule: NSObject {
                 //        }
                 //        videoTrack?.preferredTransform = transforms
                 
-                try videoTrack?.insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: asset.duration), of: asset.tracks(withMediaType: .video)[0], at: insertTime)
-                try soundTrack?.insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: asset.duration), of: asset.tracks(withMediaType: .audio)[0], at: insertTime)
+                let vid = asset.tracks(withMediaType: .video)[0]
+                let audioTracks = asset.tracks(withMediaType: .audio)
+                try videoTrack?.insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: asset.duration), of: vid, at: insertTime)
+                if (soundTrack != nil) {
+                    if (audioTracks.count > 0) {
+                        try soundTrack?.insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: asset.duration), of: audioTracks[0], at: insertTime)
+                    } else {
+                        soundTrack?.insertEmptyTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: asset.duration))
+                    }
+                }
                 insertTime = CMTimeAdd(insertTime, asset.duration)
             }
             
