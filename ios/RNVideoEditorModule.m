@@ -32,6 +32,8 @@ RCT_EXTERN_METHOD(
 );
 RCT_EXTERN_METHOD(
     merge: (NSArray *)videoFiles
+    width: (NSString *)width
+    height: (NSString *)height
     resolver: (RCTPromiseResolveBlock)resolve
     rejecter: (RCTPromiseRejectBlock)reject
 );
