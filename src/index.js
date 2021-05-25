@@ -1,4 +1,4 @@
-import {NativeModules} from 'react-native';
+import {NativeModules, Platform} from 'react-native';
 const {RNVideoEditor} = NativeModules;
 
 export class VideoEditor {
@@ -22,8 +22,12 @@ export class VideoEditor {
   }
 
   // Main functions
-  static async merge(videos = []) {
-    return await RNVideoEditor.merge(videos);
+  static async merge(videos = [], width = "", height = "") {
+    if (Platform.OS === 'ios') {
+      return await RNVideoEditor.merge(videos, width, height);
+    } else {
+      return await RNVideoEditor.merge(videos);
+    }
   }
   static async mergeWithAudio(source, audioSource) {
     return await RNVideoEditor.mergeWithAudio(source, audioSource);
