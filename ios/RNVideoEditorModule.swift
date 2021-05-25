@@ -26,7 +26,9 @@ class RNVideoEditorModule: NSObject {
         outputURL: URL,
         timeRange: CMTimeRange?,
         resolver resolve: @escaping RCTPromiseResolveBlock,
-        rejecter reject: @escaping RCTPromiseRejectBlock
+        rejecter reject: @escaping RCTPromiseRejectBlock,
+        videoWidth: String = "720",
+        videoHeight: String = "1280"
     ) -> Void {
         self.exportSession = SDAVAssetExportSession(asset: asset)
         guard self.exportSession != nil else { return reject(nil, nil, "Export failed.") }
@@ -40,8 +42,8 @@ class RNVideoEditorModule: NSObject {
         if #available(iOS 11.0, *) {
             self.exportSession!.videoSettings = [
                 AVVideoCodecKey: AVVideoCodecType.h264,
-                AVVideoWidthKey: self.VIDEO_WIDTH,
-                AVVideoHeightKey: self.VIDEO_HEIGHT,
+                AVVideoWidthKey: videoWidth,
+                AVVideoHeightKey: videoHeight,
                 AVVideoCompressionPropertiesKey: [
                     AVVideoMaxKeyFrameIntervalKey: self.VIDEO_FPS,
                     AVVideoAverageBitRateKey: self.VIDEO_BITRATE,
@@ -51,8 +53,8 @@ class RNVideoEditorModule: NSObject {
         } else {
             self.exportSession!.videoSettings = [
                 AVVideoCodecKey: AVVideoCodecH264,
-                AVVideoWidthKey: self.VIDEO_WIDTH,
-                AVVideoHeightKey: self.VIDEO_HEIGHT,
+                AVVideoWidthKey: videoWidth,
+                AVVideoHeightKey: videoHeight,
                 AVVideoCompressionPropertiesKey: [
                     AVVideoMaxKeyFrameIntervalKey: self.VIDEO_FPS,
                     AVVideoAverageBitRateKey: self.VIDEO_BITRATE,
@@ -185,6 +187,8 @@ class RNVideoEditorModule: NSObject {
     
     @objc func merge(
         _ videoFiles: Array<String>,
+        width: String,
+        height: String,
         resolver resolve: @escaping RCTPromiseResolveBlock,
         rejecter reject: @escaping RCTPromiseRejectBlock
     ) -> Void {
@@ -199,7 +203,6 @@ class RNVideoEditorModule: NSObject {
             let compositionAsset: AVMutableComposition = AVMutableComposition()
             let videoTrack: AVMutableCompositionTrack? = compositionAsset.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
             let soundTrack: AVMutableCompositionTrack? = idx == nil ? nil : compositionAsset.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
-            
             var insertTime = CMTime.zero
             for asset in assets {
                 //        let track = asset.tracks(withMediaType: .video)[0]
@@ -226,13 +229,14 @@ class RNVideoEditorModule: NSObject {
             }
             
             let outputURL: URL = try RNVideoEditorUtilities.createTempFile("mp4")
-            
             self.exportSession(
                 asset: compositionAsset,
                 outputURL: outputURL,
                 timeRange: nil,
                 resolver: resolve,
-                rejecter: reject
+                rejecter: reject,
+                videoWidth: width,
+                videoHeight: height
             )
         } catch {
             reject(nil, nil, error)
