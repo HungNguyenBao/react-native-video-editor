@@ -194,12 +194,11 @@ class RNVideoEditorModule: NSObject {
     ) -> Void {
         do {
             var assets: Array<AVAsset> = Array()
-            let idx = assets.firstIndex(where: {$0.tracks(withMediaType: .audio).count > 0})
             for source in videoFiles {
                 let asset: AVAsset! = try RNVideoEditorUtilities.requestAsset(source)
                 assets.append(asset)
             }
-            
+            let idx = assets.firstIndex(where: {$0.tracks(withMediaType: .audio).count > 0})
             let compositionAsset: AVMutableComposition = AVMutableComposition()
             let videoTrack: AVMutableCompositionTrack? = compositionAsset.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
             let soundTrack: AVMutableCompositionTrack? = idx == nil ? nil : compositionAsset.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
