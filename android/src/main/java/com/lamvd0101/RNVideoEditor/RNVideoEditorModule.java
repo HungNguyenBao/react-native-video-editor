@@ -128,8 +128,8 @@ public class RNVideoEditorModule extends ReactContextBaseJavaModule {
         bm.compress(Bitmap.CompressFormat.JPEG, 30, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
 
-        FileOutputStream fos = new FileOutputStream( tempFile.getPath() );
-        fos.write( byteArray );
+        FileOutputStream fos = new FileOutputStream(tempFile.getPath());
+        fos.write(byteArray);
         fos.close();
 
         promise.resolve("file://" + tempFile.getPath());
@@ -144,7 +144,11 @@ public class RNVideoEditorModule extends ReactContextBaseJavaModule {
       promise.reject(null, e);
     } finally {
       if (retriever != null) {
-        retriever.release();
+        try {
+          retriever.release();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }
@@ -185,7 +189,11 @@ public class RNVideoEditorModule extends ReactContextBaseJavaModule {
     } catch (Exception e) {
       promise.reject(null, e);
     } finally {
-      retriever.release();
+      try {
+        retriever.release();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
