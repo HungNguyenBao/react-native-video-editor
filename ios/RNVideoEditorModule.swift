@@ -15,7 +15,7 @@ class RNVideoEditorModule: NSObject {
     let VIDEO_HEIGHT: String = "1280"
     let VIDEO_FPS: Int = 30
     let VIDEO_BITRATE: Int = 4000000
-    var exportSession: SDAVAssetExportSession? = nil
+    var exportSession: SDAVAssetExportSessionA? = nil
     
     @objc static func requiresMainQueueSetup() -> Bool {
         return false
@@ -30,7 +30,7 @@ class RNVideoEditorModule: NSObject {
         videoWidth: String = "720",
         videoHeight: String = "1280"
     ) -> Void {
-        self.exportSession = SDAVAssetExportSession(asset: asset)
+        self.exportSession = SDAVAssetExportSessionA(asset: asset)
         guard self.exportSession != nil else { return reject(nil, nil, "Export failed.") }
         
         self.exportSession!.outputURL = outputURL
