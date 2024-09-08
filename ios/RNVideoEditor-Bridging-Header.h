@@ -10,6 +10,6 @@
 #define RNVideoEditor-Bridging-Header_h
 
 #import "React/RCTBridgeModule.h"
-#import "SDAVAssetExportSession.h"
+#import "SDAVAssetExportSessionA.h"
 
 #endif /* RNVideoEditor_Bridging_Header_h */
